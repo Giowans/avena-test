@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-function Home({ data }) {
+function Home({ data }: any) {
   const [dataState, setDataState] = useState([]);
   const [isSorted, setIsSorted] = useState(false);
 
@@ -61,6 +61,7 @@ function Home({ data }) {
           {dataState.map((user: any, index: number) => {
             return (
               <tr
+                key={`userData-${index}`}
                 className={`flex flex-row justify-between ${
                   index % 2 === 0 ? "bg-stone-600" : "bg-stone-900"
                 }`}
