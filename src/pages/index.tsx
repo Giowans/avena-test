@@ -44,58 +44,52 @@ function Home({ data }) {
       >
         Reset Data
       </button>
-      <table className="w-[44rem] h-96">
-        <tr className="flex flex-row justify-between p-4 border border-0 rounded-lg bg-slate-700">
-          <th>
-            <p className="font-bold">Photo</p>
-          </th>
-          <th>
-            <p className="font-bold">First Name</p>
-          </th>
-          <th>
-            <p className="font-bold">Last Name</p>
-          </th>
-          <th className="flex flex-row">
-            <p className="font-bold">Country</p>
-            <button className="ml-2" onClick={() => sortData()}>
-              {isSorted ? "(sort me DESC)" : "(sort me ASC)"}
-            </button>
-          </th>
-          <th>
-            <p className="font-bold">Actions</p>
-          </th>
-        </tr>
-        {dataState.map((user: any, index: number) => {
-          return (
-            <tr
-              className={`flex flex-row justify-between ${
-                index % 2 === 0 ? "bg-stone-600" : "bg-stone-900"
-              }`}
-            >
-              <td>
-                <img
-                  alt={`user-${index}`}
-                  src={user.picture.thumbnail}
-                  width={40}
-                  height={40}
-                />
-              </td>
-              <td>{user.name.first}</td>
-              <td>{user.name.last}</td>
-              <td>{user.location.country}</td>
-              <td>
-                <div>
-                  <button
-                    onClick={() => deleteUser(index)}
-                    className="p-2 text-sm bg-red-500 rounded-lg"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </td>
-            </tr>
-          );
-        })}
+      <table className="w-[44rem]">
+        <tbody>
+          <tr className="flex flex-row justify-between p-4 border border-0 rounded-lg bg-slate-700">
+            <th className="font-bold">Photo</th>
+            <th className="font-bold">First Name</th>
+            <th className="font-bold">Last Name</th>
+            <th className="flex flex-row font-bold">
+              Country
+              <button className="ml-2" onClick={() => sortData()}>
+                {isSorted ? "(sort me DESC)" : "(sort me ASC)"}
+              </button>
+            </th>
+            <th className="font-bold">Actions</th>
+          </tr>
+          {dataState.map((user: any, index: number) => {
+            return (
+              <tr
+                className={`flex flex-row justify-between ${
+                  index % 2 === 0 ? "bg-stone-600" : "bg-stone-900"
+                }`}
+              >
+                <td>
+                  <img
+                    alt={`user-${index}`}
+                    src={user.picture.thumbnail}
+                    width={40}
+                    height={40}
+                  />
+                </td>
+                <td>{user.name.first}</td>
+                <td>{user.name.last}</td>
+                <td>{user.location.country}</td>
+                <td>
+                  <div>
+                    <button
+                      onClick={() => deleteUser(index)}
+                      className="p-2 text-sm bg-red-500 rounded-lg"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
     </main>
   );
