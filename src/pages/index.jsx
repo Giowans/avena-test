@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Table from "../components/Table";
+import Modal from '../components/Modal';
+import { useRouter } from "next/router";
 
 function Home({ data }) {
   const [dataState, setDataState] = useState([]);
@@ -8,10 +10,18 @@ function Home({ data }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [displayQuant, setDisplayQuant] = useState(10);
   const [filterText, setFilterText] = useState("");
+  const [selectedUser, setSelectedUser] = useState({name: {first: 'Default'}})
+  const [showModal, setShowModal ] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     setDataState(data);
   }, []);
+
+  useEffect(() => {
+     fetchData();
+  }, [displayQuant, currentPage])
 
   const deleteUser = (userIndex) => {
     const refer = [...dataState];
@@ -20,7 +30,9 @@ function Home({ data }) {
   };
 
   const fetchData = async () => {
-
+    const res = await fetch(`https://randomuser.me/api/?page=${currentPage}&results=${displayQuant}&seed=abc`);
+    const data = await res.json();
+    setDataState(data.results);
   };
 
   const handlePageChange = (option) => {
@@ -90,7 +102,7 @@ function Home({ data }) {
             viewBox="0 0 24 24"
             strokeWidth={2.5}
             stroke="currentColor"
-            className={`w-6 h-6 ${document.activeElement.id === "search" ? 'text-black' : 'text-slate-400'}`}
+            className={`w-6 h-6 text-slate-400`}
           >
             <path
               strokeLinecap="round"
@@ -106,15 +118,25 @@ function Home({ data }) {
           />
         </div>
         <div className="flex flex-row items-center justify-start w-fit h-fit">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 ${document.activeElement.id === "quant" ? 'text-black' : 'text-slate-400'}`}>
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-6 h-6 text-slate-400`}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
           </svg>
 
           <input 
             placeholder="Cantidad..."
+            defaultValue={displayQuant}
             id="quant"
             type="number"
-            onBlur={(e) => setFilterText(e.target.value)} 
+            min={5}
+            max={100}
+            onChange={(e) => {
+              let val = parseInt(e.target.value);
+              if(val < 5 || !e.target.value)
+              {
+                val = 5;
+              }
+              setDisplayQuant(val);  
+            }} 
             className="px-2 py-1 ml-2 border-2 border-solid rounded-lg select-none border-slate-500 h-fit" 
           />
         </div>
@@ -166,6 +188,10 @@ function Home({ data }) {
         </div>
       </div>
       <Table
+        onRowSelected={() => {
+          setSelectedUser(dataState[0]);
+          setShowModal(true);
+        }}
         data={dataState}
         sorted={sorted}
         headers={[
@@ -177,7 +203,7 @@ function Home({ data }) {
           {
             title: "First Name",
             key: "first_name",
-            isSortable: false,
+            isSortable: true,
           },
           {
             title: "Last Name",
@@ -195,12 +221,18 @@ function Home({ data }) {
         className={`w-full md:h-[33rem] md:w-[60rem] mt-2`}
         headerClassName={"bg-slate-300"}
       />
+      <Modal
+        userData={selectedUser}
+        title={`${selectedUser.name.first}'s Details`} 
+        visibility={showModal}
+        setVisibility={setShowModal}
+      />
     </main>
   );
 }
 
 export async function getServerSideProps() {
-  const res = await fetch("https://randomuser.me/api/?results=100");
+  const res = await fetch("https://randomuser.me/api/?page=1&results=10&seed=abc");
   const data = await res.json();
 
   return { props: { data: data.results } };

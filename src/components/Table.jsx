@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { motion } from 'framer-motion';
 
-const Table = ({ data, headers, className, headerClassName, sortData, sorted, deleteUser}) => {
+const Table = ({ data, headers, className, headerClassName, sortData, sorted, deleteUser, onRowSelected}) => {
   //State
 
   //Effects
@@ -38,8 +38,9 @@ const Table = ({ data, headers, className, headerClassName, sortData, sorted, de
         {data.map((user, index) => {
             return (
               <tr
+                onClick={() => onRowSelected()}
                 key={`userData-${index}`}
-                className={`flex flex-row items-center justify-between py-1 px-3 ${
+                className={`flex cursor-pointer flex-row items-center justify-between py-1 px-3 ${
                   index % 2 === 0 ? "bg-stone-200" : "bg-stone-100"
                 }`}
               >
